@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature android:name="android.hardware.camera.ar" />
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FYProject"
+        tools:targetApi="33">
+        <activity
+            android:name=".ObjectActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SynonymsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ArActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
+        <meta-data
+            android:name="com.vuforia.LICENSE_KEY"
+            android:value="AbvHZv7/////AAABmapYnUpnX0FhlWETPUcr+uQVpB0Xl0mXhgPwixy0i4A66c/5isN83doH2r0hPa1O012tCjF2K3nB4KS1sKMnBWrd+eWF+0PMq4/NktmPCR8lg8GLeE5iqmPhkFp4AUr9sXeXcRgQVujAdVV/Pe1PfQrCZqOfQ9Ji/56RUyUGEKJZIDioA3RcUgXUM6eEomwq18HP8IINR/y01zvNHfFQV/ytYwbkdOYihMHx/M+k2MYxLkbiwLh8O+ncCT2XigM+a4CJI+fu21IerIzcwcuTP7Ddcysfp5CyrNMh1VmGFDKUneiENrcOkjoo8AAUv+0iRVvDXV2lIRSS6m9FUg97WY1FddKO+Jssnaj62l7rSC6Z" />
+    </application>
+
+</manifest>
