@@ -3,18 +3,14 @@ package com.nitc.fyproject;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.ar.core.Anchor;
-import com.google.ar.core.Frame;
-import com.google.ar.core.Pose;
-import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
-import com.google.ar.sceneform.ux.TransformableNode;
+
+import java.util.Locale;
 
 public class ArActivity extends AppCompatActivity {
     FloatingActionButton ArButton;
@@ -27,9 +23,15 @@ public class ArActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ar);
 
-
+        String object = getIntent().getStringExtra("objectName");
         Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-        sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+
+        if(("avocado").equals(object.toLowerCase(Locale.ROOT))){
+            sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
+        }
+        if(("car").equals(object.toLowerCase(Locale.ROOT))){
+            sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Buggy/glTF/Buggy.gltf"));
+        }
         sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
         startActivity(sceneViewerIntent);
 
@@ -63,32 +65,32 @@ public class ArActivity extends AppCompatActivity {
 
     }
 
-    private void createModel(Anchor anchor) {
-        AnchorNode anchorNode = new AnchorNode(anchor);
-        anchorNode.setParent(arFragment.getArSceneView().getScene());
-        TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem());
-        transformableNode.setParent(anchorNode);
-        transformableNode.setRenderable(modelRenderable);
-        transformableNode.select();
-    }
+//    private void createModel(Anchor anchor) {
+//        AnchorNode anchorNode = new AnchorNode(anchor);
+//        anchorNode.setParent(arFragment.getArSceneView().getScene());
+//        TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem());
+//        transformableNode.setParent(anchorNode);
+//        transformableNode.setRenderable(modelRenderable);
+//        transformableNode.select();
+//    }
 
-    private void setUpModel() {
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("apple.glb"))
-                .build()
-                .thenAccept(renderable -> {
-                    modelRenderable = renderable;
-                    Frame frame = arFragment.getArSceneView().getArFrame();
-                    if (frame != null) {
-                        Pose pose = frame.getCamera().getPose().compose(Pose.makeTranslation(0, 0, -1f));
-                        Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(pose);
-                        createModel(anchor);
-                    }
-                })
-                .exceptionally(throwable -> {
-                    Toast.makeText(this, "Can't Load", Toast.LENGTH_SHORT).show();
-                    return null;
-                });
-    }
+//    private void setUpModel() {
+//        ModelRenderable.builder()
+//                .setSource(this, Uri.parse("apple.glb"))
+//                .build()
+//                .thenAccept(renderable -> {
+//                    modelRenderable = renderable;
+//                    Frame frame = arFragment.getArSceneView().getArFrame();
+//                    if (frame != null) {
+//                        Pose pose = frame.getCamera().getPose().compose(Pose.makeTranslation(0, 0, -1f));
+//                        Anchor anchor = arFragment.getArSceneView().getSession().createAnchor(pose);
+//                        createModel(anchor);
+//                    }
+//                })
+//                .exceptionally(throwable -> {
+//                    Toast.makeText(this, "Can't Load", Toast.LENGTH_SHORT).show();
+//                    return null;
+//                });
+//    }
 
 }

@@ -2,7 +2,6 @@ package com.nitc.fyproject;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-
+    // Hello Esha
 
     SurfaceView surfaceView;
     TextView text;
@@ -42,47 +41,16 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         surfaceView = findViewById(R.id.camera);
         text = findViewById(R.id.text);
         Synonyms = findViewById(R.id.SynonymsButton);
-        ArrayList<String> objects = null;
-        try {
-            objects = Objects(text.getText().toString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("Objects : "+ objects.toString());
-
-        ArButton = findViewById(R.id.ArButton);
-        ArrayList<String> finalObjects = objects;
-        ArButton.setOnClickListener(view -> {
-//            Intent intent = new Intent(MainActivity.this, ArActivity.class);
-//            startActivity(intent);
-            Intent sceneViewerIntent = new Intent(Intent.ACTION_VIEW);
-
-            if(finalObjects.contains("car")){
-                sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"));
-            } else if (finalObjects.contains("bike")) {
-                sceneViewerIntent.setData(Uri.parse("https://arvr.google.com/scene-viewer/1.0?file=https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Buggy/glTF/Buggy.gltf"));
-            }
-            sceneViewerIntent.setPackage("com.google.android.googlequicksearchbox");
-            startActivity(sceneViewerIntent);
-
-        });
-
-        Synonyms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SynonymsActivity.class);
-                intent.putExtra("recognisedText", text.getText().toString());
-                startActivity(intent);
-            }
-        });
         startCam();
+
+
     }
 
 
@@ -94,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             cameraSource = new CameraSource.Builder(getApplicationContext(), textRecognizer)
                     .setFacing(CameraSource.CAMERA_FACING_BACK).setRequestedPreviewSize(1280, 1024)
-                    .setAutoFocusEnabled(true).setRequestedFps(2.0f).build();
+                    .setAutoFocusEnabled(true).setRequestedFps(1.0f).build();
 
             surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
                 @Override
@@ -141,6 +109,31 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 String recognisedText = stringBuilder[0].toString();
                                 text.setText(recognisedText);
+                                Synonyms.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+//                                        Intent intent = new Intent(MainActivity.this, SynonymsActivity.class);
+                                        Intent intent = new Intent(MainActivity.this, InfoActivity.class);
+                                        intent.putExtra("recognisedText", text.getText().toString());
+                                        startActivity(intent);
+                                    }
+                                });
+                                ArrayList<String> objects = null;
+
+                                try {
+                                    objects = Objects(text.getText().toString());
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                ArButton = findViewById(R.id.ArButton);
+                                ArrayList<String> finalObjects = objects;
+                                ArButton.setOnClickListener(view -> {
+                                    Intent intent = new Intent(MainActivity.this, ObjectActivity.class);
+                                    intent.putExtra("objects", finalObjects.toString().substring(1, finalObjects.toString().length() -1));
+                                    startActivity(intent);
+                                });
+
                             }
                         });
 

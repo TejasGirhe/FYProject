@@ -22,6 +22,9 @@
         android:theme="@style/Theme.FYProject"
         tools:targetApi="33">
         <activity
+            android:name=".InfoActivity"
+            android:exported="false" />
+        <activity
             android:name=".ObjectActivity"
             android:exported="false" />
         <activity

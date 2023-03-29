@@ -9,21 +9,70 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:weightSum="3"
+        android:orientation="vertical">
 
-        <ListView
-            android:id="@+id/list_view_1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-        <ListView
-            android:id="@+id/list_view_2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/list_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:scrollbars="horizontal"
+                    android:visibility="gone"
+                    />
+
+            <HorizontalScrollView android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                <TextView
+                    android:id="@+id/text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="true"
+                    android:text="Hello"/>
+            </HorizontalScrollView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/synonyms"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image2d"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/read"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Read"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>
