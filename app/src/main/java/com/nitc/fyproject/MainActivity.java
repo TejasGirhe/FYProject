@@ -114,7 +114,9 @@ public class MainActivity extends AppCompatActivity {
                                     public void onClick(View view) {
 //                                        Intent intent = new Intent(MainActivity.this, SynonymsActivity.class);
                                         Intent intent = new Intent(MainActivity.this, InfoActivity.class);
-                                        intent.putExtra("recognisedText", text.getText().toString());
+                                        String str = text.getText().toString();
+                                        str = str.replace("\n", " ");
+                                        intent.putExtra("recognisedText", str);
                                         startActivity(intent);
                                     }
                                 });

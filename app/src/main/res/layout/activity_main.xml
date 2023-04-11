@@ -17,7 +17,8 @@
         android:layout_marginEnd="25dp"
         android:layout_marginBottom="25dp"
         android:contentDescription="TODO"
-        android:src="@drawable/ar_logo" />
+        android:src="@drawable/ar_logo"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/SynonymsButton"

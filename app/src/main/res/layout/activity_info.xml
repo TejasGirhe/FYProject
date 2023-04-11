@@ -12,37 +12,62 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        android:hint="Scanned text will appear here..."/>
 
     <TextView
         android:id="@+id/current_word_textview"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textColor="@android:color/holo_red_dark"
-        android:layout_below="@+id/sentence_textview"/>
+        android:layout_below="@+id/sentence_textview"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/synonyms_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/current_word_textview"
+        android:layout_above="@+id/buttons_layout"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:gravity="center">
 
         <TextView
             android:id="@+id/synonyms_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:hint="Synonyms"
+            android:padding="5dp"
+            />
+
+        <TextView
+            android:id="@+id/def"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="5dp"
+            android:hint="Definition"/>
+
+        <TextView
+            android:id="@+id/fos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:padding="5dp"
+            android:hint="Figure of speech"/>
 
         <ImageView
             android:id="@+id/imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="400dp"
+            android:layout_height="300dp"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="Image"/>
+            android:contentDescription="Image"
+            android:src="@drawable/img"/>
 
     </LinearLayout>
 
@@ -50,8 +75,10 @@
         android:id="@+id/buttons_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/synonyms_layout"
-        android:gravity="center_horizontal"
+        android:gravity="bottom|center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
         android:orientation="horizontal">
 
         <Button
