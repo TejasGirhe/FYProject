@@ -1,6 +1,7 @@
 package com.nitc.fyproject;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -12,21 +13,19 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.ar.sceneform.ux.ArFragment;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -39,6 +38,7 @@ import okhttp3.Response;
 public class InfoActivity extends AppCompatActivity {
     private String[] words;
     private int currentWordIndex = 0;
+    private ArFragment arFragment;
     private int highlightedWordStartIndex = 0;
     private int highlightedWordEndIndex = 0;
     private TextToSpeech textToSpeech;
@@ -50,13 +50,17 @@ public class InfoActivity extends AppCompatActivity {
     private TextView synonymsTextView;
     private ImageView imageView;
     private Button previousButton;
-
+    String sentence = "";
     private Button play, pause;
     private Button nextButton;
     private boolean speaking;
     TextView def, fos;
     Thread read;
-
+    ProgressDialog progressDialog;
+    OnLoaded onLoaded;
+    RecyclerView recyclerView;
+    LinearLayout LoadLayout;
+    Button LoadImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,11 +77,34 @@ public class InfoActivity extends AppCompatActivity {
         synonymsLayout = findViewById(R.id.synonyms_layout);
         def = findViewById(R.id.def);
         fos = findViewById(R.id.fos);
+        LoadImage = findViewById(R.id.load_image);
+        LoadLayout = findViewById(R.id.load_button);
+        LoadLayout.setVisibility(View.INVISIBLE);
 
-        String sentence = getIntent().getStringExtra("recognisedText");
+        sentence = getIntent().getStringExtra("recognisedText");
+        char[] symbols = {'!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|', '}', '~', '\n'};
+        for (char symbol : symbols) {
+            sentence = sentence.replace(String.valueOf(symbol), " ");
+        }
+
         words = sentence.split(" ");
         sentenceTextView.setText(sentence);
         speaking = false;
+
+        progressDialog = new ProgressDialog(InfoActivity.this);
+        progressDialog.setMessage("Loading Image...");
+
+        recyclerView = findViewById(R.id.recycler);
+
+        onLoaded = new OnLoaded() {
+            @Override
+            public void loaded(ArrayList<String> arrayList) {
+                Toast.makeText(InfoActivity.this, arrayList.toString(), Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                ImageAdapter adapter = new ImageAdapter(InfoActivity.this, arrayList);
+                recyclerView.setAdapter(adapter);
+            }
+        };
 
         textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -92,14 +119,13 @@ public class InfoActivity extends AppCompatActivity {
         Runnable runnable = new Runnable() {
             public void run() {
                 while (speaking && currentWordIndex < words.length) {
-                    final String word = words[currentWordIndex];
+                    final String word = words[currentWordIndex].trim();
 
                     runOnUiThread(() -> {
                         highlightCurrentWord(sentence);
                         synonymsLayout.setVisibility(View.VISIBLE);
                         currentWordTextView.setText(word);
                         getSynonyms(word);
-                        getImageResource(word);
                         updateWordUI(words[currentWordIndex]);
                     });
 
@@ -142,6 +168,13 @@ public class InfoActivity extends AppCompatActivity {
                 }
             }
         });
+
+//        try {
+//            Thread.sleep(2000);
+//            play.performClick();
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
 
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,52 +252,68 @@ public class InfoActivity extends AppCompatActivity {
     private void updateWordUI(String word) {
         currentWordTextView.setText(word);
         getSynonyms(word);
-        getImageResource(word);
-
-        String keyword = "car";
-        String url = "https://api.sketchfab.com/v3/search?type=models&q=" + keyword;
-        String apiKey = "your_api_key_here";
-        InputStream inputStream = null;
-        try {
-            URL apiURL = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) apiURL.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Authorization", "Token " + apiKey);
-            inputStream = connection.getInputStream();
-            StringBuilder response = new StringBuilder();
-            String line;
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
-            }
-            reader.close();
-
-            JSONObject jsonResponse = new JSONObject(response.toString());
-            JSONArray results = jsonResponse.getJSONArray("results");
-            String modelUrl = results.getJSONObject(0).getString("viewerUrl");
-        } catch (Exception e) {
-            System.out.println("Error in 3d model code");
-        }
-
     }
 
-    private void getSynonyms(String word) {
-        synonymsTask = new Thesaurus.GetSynonymsTask(new Thesaurus.ThesaurusCallback() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onSynonymsFetched(ArrayList<ArrayList<String>> List) {
-                synonymsTextView.setText("Synonyms : " + List.get(0).toString().substring(1, List.get(0).toString().length() - 1));
-                fos.setText("FOS : " + List.get(2).get(0).toString());
-                if(!(List.get(2).get(0).contains("conjuction") || List.get(2).get(0).contains("preposition") || List.get(2).get(0).contains("article")))
-                    def.setText("DEF : " + List.get(1).get(0).toString());
-            }
-        });
-        synonymsTask.execute(word);
+    private void getSynonyms(String word){
+        try{
+            synonymsTask = new Thesaurus.GetSynonymsTask(new Thesaurus.ThesaurusCallback() {
+                @SuppressLint({"SetTextI18n", "UseCompatLoadingForDrawables"})
+                @Override
+                public void onSynonymsFetched(ArrayList<ArrayList<String>> List) {
+                    synonymsTextView.setText("Synonyms : " + List.get(0).toString().substring(1, List.get(0).toString().length() - 1));
+                    fos.setText("FOS : " + List.get(2).get(0).toString());
+                    if(!(List.get(2).get(0).contains("conjuction") || List.get(2).get(0).contains("preposition") || List.get(2).get(0).contains("article")))
+                    {
+                        try{
+                            def.setText("DEF : " + List.get(1).get(0).toString());
+                        }catch (Exception e){
+                            System.out.println(e.toString());
+                        }
+                    }
+
+                    if(List.get(2).get(0).contains("noun") || List.get(2).get(0).contains("pronoun") || List.get(2).get(0).contains("verb"))
+                    {
+                        if(List.get(2).get(0).contains("pronoun"))
+                        {
+                            if(word.toLowerCase(Locale.ROOT).contains("he") || word.toLowerCase(Locale.ROOT).contains("him") || word.toLowerCase(Locale.ROOT).contains("her") || word.toLowerCase(Locale.ROOT).contains("she"))
+                            {
+                                getImageResource(word);
+                            }
+                            else
+                            {
+                                imageView.setImageDrawable(null);
+                                LoadLayout.setVisibility(View.INVISIBLE);
+//                            Picasso.get().load(R.drawable.img).into(imageView);
+                            }
+                        }
+                        else{
+                            getImageResource(word);
+                        }
+                    }
+                    else{
+                        imageView.setImageDrawable(null);
+                        LoadLayout.setVisibility(View.INVISIBLE);
+
+//                        recyclerView.setVisibility(View.GONE);
+//                    Picasso.get().load(R.drawable.img).into(imageView);
+                    }
+                }
+            });
+            synonymsTask.execute(word);
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
     }
 
     private void getImageResource(String word) {
+        word = word.trim();
+        Toast.makeText(this, word, Toast.LENGTH_SHORT).show();
+//        loadWordImage(word);
+        LoadLayout.setVisibility(View.VISIBLE);
+        progressDialog.show();
+        pause.performClick();
+        new ImageGenerator(InfoActivity.this).generate(word, 600, 600, 2, onLoaded);
 
-        loadWordImage(word);
         // Get the image resource for the word using an API or a local database
 //        String imageUrl = "https://source.unsplash.com/800x600/?" + word;
 //
@@ -319,4 +368,5 @@ public class InfoActivity extends AppCompatActivity {
             }
         });
     }
+
 }
