@@ -31,7 +31,6 @@ public class InfoActivity extends AppCompatActivity {
     private int highlightedWordEndIndex = 0;
     private TextToSpeech textToSpeech;
     Thesaurus.GetSynonymsTask synonymsTask;
-
     private TextView sentenceTextView;
     private TextView currentWordTextView;
     private LinearLayout synonymsLayout;
@@ -157,18 +156,11 @@ public class InfoActivity extends AppCompatActivity {
             }
         });
 
-//        try {
-//            Thread.sleep(2000);
-//            play.performClick();
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-
         pause.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                currentWordIndex--;
                 speaking = false;
-                // Interrupt the thread to make it stop
                 read.interrupt();
             }
         });
@@ -184,23 +176,26 @@ public class InfoActivity extends AppCompatActivity {
                     read.interrupt();
                     speaking = false;
                 }
+
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentWordIndex < words.length) {
+                if (currentWordIndex >= words.length - 1) {
+                    currentWordIndex = 0;
+                } else {
                     currentWordIndex++;
-                    highlightCurrentWord(sentence);
-                    textToSpeech.speak(words[currentWordIndex], TextToSpeech.QUEUE_FLUSH, null, null);
-                    updateWordUI(words[currentWordIndex]);
-                    read.interrupt();
-                    speaking = false;
                 }
+                highlightCurrentWord(sentence);
+                textToSpeech.speak(words[currentWordIndex], TextToSpeech.QUEUE_FLUSH, null, null);
+                updateWordUI(words[currentWordIndex]);
+                read.interrupt();
+                speaking = false;
+
             }
         });
-
 
     }
 
