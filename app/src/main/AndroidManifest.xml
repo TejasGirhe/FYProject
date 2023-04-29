@@ -28,15 +28,6 @@
             android:name=".InfoActivity"
             android:exported="false" />
         <activity
-            android:name=".ObjectActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SynonymsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ArActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

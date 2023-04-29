@@ -19,21 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.ar.sceneform.ux.ArFragment;
-import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class InfoActivity extends AppCompatActivity {
     private String[] words;
@@ -283,7 +271,6 @@ public class InfoActivity extends AppCompatActivity {
                             {
                                 imageView.setImageDrawable(null);
                                 LoadLayout.setVisibility(View.INVISIBLE);
-//                            Picasso.get().load(R.drawable.img).into(imageView);
                             }
                         }
                         else{
@@ -293,9 +280,6 @@ public class InfoActivity extends AppCompatActivity {
                     else{
                         imageView.setImageDrawable(null);
                         LoadLayout.setVisibility(View.INVISIBLE);
-
-//                        recyclerView.setVisibility(View.GONE);
-//                    Picasso.get().load(R.drawable.img).into(imageView);
                     }
                 }
             });
@@ -308,18 +292,10 @@ public class InfoActivity extends AppCompatActivity {
     private void getImageResource(String word) {
         word = word.trim();
         Toast.makeText(this, word, Toast.LENGTH_SHORT).show();
-//        loadWordImage(word);
         LoadLayout.setVisibility(View.VISIBLE);
         progressDialog.show();
         pause.performClick();
         new ImageGenerator(InfoActivity.this).generate(word, 600, 600, 2, onLoaded);
-
-        // Get the image resource for the word using an API or a local database
-//        String imageUrl = "https://source.unsplash.com/800x600/?" + word;
-//
-//        Glide.with(this)
-//                .load(imageUrl)
-//                .into(imageView);
     }
 
     public void onInit(int status) {
@@ -332,41 +308,6 @@ public class InfoActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         textToSpeech.shutdown();
-    }
-
-//    VImlsGmykNR8H9NYbJKdtdn4Q09DhPAIdvb3vsK7y1JcxbkmSeCjY7bt
-
-    public void loadWordImage(String word) {
-        String apiKey = "VImlsGmykNR8H9NYbJKdtdn4Q09DhPAIdvb3vsK7y1JcxbkmSeCjY7bt";
-        String apiUrl = "https://api.pexels.com/v1/search?query=" + word + "&per_page=1&width=800&height=600"; // Replace with your Pexels API endpoint URL
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(apiUrl)
-                .header("Authorization", apiKey)
-                .build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String jsonData = response.body().string();
-                try {
-                    JSONObject json = new JSONObject(jsonData);
-                    JSONArray photos = json.getJSONArray("photos");
-                    if (photos.length() > 0) {
-                        JSONObject photo = photos.getJSONObject(0);
-                        String imageUrl = photo.getJSONObject("src").getString("medium");
-                        runOnUiThread(() -> Picasso.get().load(imageUrl).into(imageView));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
 }

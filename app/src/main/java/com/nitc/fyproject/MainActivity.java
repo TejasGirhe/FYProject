@@ -128,14 +128,6 @@ public class MainActivity extends AppCompatActivity {
                                     throw new RuntimeException(e);
                                 }
 
-                                ArButton = findViewById(R.id.ArButton);
-                                ArrayList<String> finalObjects = objects;
-                                ArButton.setOnClickListener(view -> {
-                                    Intent intent = new Intent(MainActivity.this, ObjectActivity.class);
-                                    intent.putExtra("objects", finalObjects.toString().substring(1, finalObjects.toString().length() -1));
-                                    startActivity(intent);
-                                });
-
                             }
                         });
 

@@ -5,17 +5,25 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
+        maven{ url "https://chaquo.com/maven"}
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        gradlePluginPortal()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.4'
         classpath 'com.google.ar.sceneform:plugin:1.17.1'
+        classpath "com.chaquo.python:gradle:9.1.0"
     }
 }
 
 plugins {
     id 'com.android.application' version '7.4.1' apply false
     id 'com.android.library' version '7.4.1' apply false
+    id 'com.chaquo.python' version '14.0.2' apply false
 }
+
 
 allprojects {
     repositories {
